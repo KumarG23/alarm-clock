@@ -222,3 +222,35 @@ body {
     box-shadow: 0 5px 25px #00c4cc;
     transform: translateX(10px);
 }
+
+.alarm-form {
+    z-index: 999;
+  /*position: absolute;
+  top: 7px;
+  right: 5px; */
+  list-style: none;
+  background: #353e54;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0, 5, 25, rgba(0, 0, 0, 0.5);
+}
+
+#alarmTime, button {
+    background: #485470;
+    color: #24ff6d;
+}
+
+button:hover{
+    transform: translateY(-5px);
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+
+
+
