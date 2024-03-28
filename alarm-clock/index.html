@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Clock</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+    <div class="digital-clock">
+        <i class="uil uil-ellipsis-v dot-menu-btn"></i>
+        <ul class="dot-menu">
+            <li class="menu-item">
+                <span class="clock-format-text">24-hour format</span>
+                <div class="format-switch-btn" data-format="12"></div>
+            </li>
+        </ul>
+        <div class="time">
+            <span class="hours">08</span>
+            <span class="dots">:</span>
+            <span class="minutes">30</span>
+            <div class="right-side">
+                <span class="period">AM/PM</span>
+                <span class="seconds">00</span>
+            </div>
+        </div>
+        <div class="calendar">
+            <span class="month-name">Month</span>,
+            <span class="day-name">Day</span>
+            <span class="day-number">00</span>
+            <span class="year">000</span>
+        </div>
+        <div class="container">
+            <div class="alarm-form">
+                <input type="time" id="alarmTime">
+                <!-- Ensure the onclick attribute calls the setAlarm() function -->
+                <button onclick="setAlarm()">Set Alarm</button>
+            </div>
+            <div id="alarmList" class="alarm-list">
+                <!-- Alarm items will be listed here -->
+            </div>
+        </div>
+        
+        <audio id="alarmSound">
+            <!-- Use the correct source URL for your audio file -->
+            <source src="rooster.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        
+    <script src="main.js"></script>
+
+</body>
+</html>
