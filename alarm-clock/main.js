@@ -78,12 +78,16 @@ dotMenuBtn.addEventListener("click", () => {
 });
 
 // Get references to alarm-related elements
-const alarmList = document.getElementById("alarmList");
-const alarmTimeInput = document.getElementById("alarmTime");
-const alarmSound = document.getElementById("alarmSound");
+let alarmList = document.getElementById("alarmList");
+let alarmTimeInput = document.getElementById("alarmTime");
+let alarmSound = document.getElementById("alarmSound");
 
 // Array to store alarm objects
 let alarms = [];
+
+let alarmIdCounter =1;
+
+let snoozeDuration = 120000; // snooze set to 2 minutes
 
 // Function to set an alarm
 function setAlarm() {
@@ -111,18 +115,19 @@ function setAlarm() {
   
     // Calculating the time until the alarm goes off
     let timeUntilAlarm = alarmTime - now;
+
   
     // If the specified time is earlier than the current time, set the alarm for the next day
-    if (timeUntilAlarm < 0) {
-      alarmTime.setDate(alarmTime.getDate() + 1);
-      timeUntilAlarm = alarmTime - now;
+    if (timeUntilAlarm < 0) { // checks if alarm has already passed
+      alarmTime.setDate(alarmTime.getDate() + 1); // sets time for alarm to next day
+      timeUntilAlarm = alarmTime - now; // recalculate time until alarm
     }
   
     // Creating an alarm object with time, active status, unique id, and timeout id
     const alarm = {
       time: time, // stores time for alarm to trigger
       active: true, // represents alarm is active. default true. 
-      id: new Date().getTime(), // gives alarm unique identifier. finds milliseconds since 1/1/1970
+      id: alarmIdCounter++, // this gives each alarm an id starting with alarm1 and counting upward.
       timeoutId: null, // store timeout id for alarm. default null
       alarmTime: alarmTime, // Store the alarm time for reference
     };
@@ -134,11 +139,16 @@ function setAlarm() {
     renderAlarms();
   
     // Set the timeout to trigger the alarm
-    alarm.timeoutId = setTimeout(() => {
-      playAlarmSound();
-      renderAlarms();
-    }, timeUntilAlarm);
-}
+    alarm.timeoutId = setTimeout(() => { // set timer to execute function
+      playAlarmSound(); // when timer ends play alarm sound
+      renderAlarms(); // after timer plays update list of alarms
+      alarm.timeoutId = setTimeout(() => {
+        playAlarmSound();
+        renderAlarms();
+      } ,snoozeDuration);
+    }, timeUntilAlarm); // determines how long after timer the function will execute
+}    
+    
 
 // Function to toggle an alarm
 function toggleAlarm(id) { // toggle alarm w/ id parameter
@@ -147,22 +157,24 @@ function toggleAlarm(id) { // toggle alarm w/ id parameter
   
   clearTimeout(alarm.timeoutId); // cancels the alarm.timeoutId
   
-  if (alarm.active) {
-    const now = new Date();
-    const alarmTime = new Date(now.toDateString() + " " + alarm.time);
-    const timeUntilAlarm = alarmTime - now;
-    alarm.timeoutId = setTimeout(() => {
-      playAlarmSound();
-      alarm.active = false;
-      renderAlarms();
-    }, timeUntilAlarm);
+  if (alarm.active) { // checks if alarm is active
+    const now = new Date(); // creates new date object
+    const alarmTime = new Date(now.toDateString() + " " + alarm.time); // new date object representing when the alarm should go off
+    const timeUntilAlarm = alarmTime - now; // time from when the alarm should go off from now
+    alarm.timeoutId = setTimeout(() => { // sets timeout function
+      playAlarmSound(); // play alarm sound
+      alarm.active = false; // changes the alarm to false
+      renderAlarms(); // updates the alarm list
+    }, timeUntilAlarm); 
   } else {
     // Update the text content of the toggle button
-    const toggleButton = document.querySelector(`#toggle-${id}`);
-    toggleButton.textContent = "Turn On";
-    renderAlarms();
+    console.log('turning alarm off');
+    const toggleButton = document.querySelector(`#toggle-${id}`); // selects toggle button with the toggle buttons specific id
+    toggleButton.textContent = "Turn Off"; // changes text content to turn off
   }
+renderAlarms(); // had to move this outside of the else block so that text could change back to turn on. :/
 }
+
 
 // Function to delete an alarm
 function deleteAlarm(id) {
@@ -182,6 +194,28 @@ function deleteAlarm(id) {
   }
 }
 
+function snoozeAlarm(id) {
+    const alarm = alarms.find((alarm) => alarm.id === id);
+    clearTimeout(alarm.timeoutId); // Clear the existing timeout
+    
+    const newAlarmTime = new Date(alarm.alarmTime.getTime() + snoozeDuration);
+    alarm.alarmTime = newAlarmTime;
+
+    
+    alarm.timeoutId = setTimeout(() => {
+        playAlarmSound();
+        renderAlarms(); // update alarms list
+    }, snoozeDuration);
+
+    console.log("updated value of alarmTime:", newAlarmTime);
+
+
+
+    // Render the alarms with the updated time
+    renderAlarms();
+}
+
+
 // Function to render the list of alarms
 function renderAlarms() {
   // Clear existing list of alarms
@@ -189,36 +223,37 @@ function renderAlarms() {
 
   // Loop through each alarm object and create corresponding HTML elements
   alarms.forEach((alarm) => {
-    const alarmItem = document.createElement("div");
-    alarmItem.classList.add('alarm-item');
+    const alarmItem = document.createElement("div"); // container for alarmItems
+    alarmItem.classList.add('alarm-item'); // class for styling
 
-    const timeElement = document.createElement("span");
-    timeElement.classList.add("time");
-    timeElement.textContent = alarm.time;
-    alarmItem.appendChild(timeElement); //append as a child to actions element
+    const timeElement = document.createElement("span"); //creates a span element of timeElement
+    timeElement.classList.add("time"); // gives it a class for styling
+    timeElement.textContent = alarm.time; // sets the text content of the element to the alarm time
+    alarmItem.appendChild(timeElement); // big box = alarmItem, smaller box inside big box = timeElement
 
-    const actionsElement = document.createElement("div");
+    const actionsElement = document.createElement("div"); // creates a div container to hold actions
     actionsElement.classList.add("actions");
 
-    const toggleButton = document.createElement("label"); // Create label for toggle button
-    toggleButton.classList.add("toggle-button"); // Add class for styling
-    toggleButton.setAttribute('for', `toggle-${alarm.id}`); // Set for attribute to link with input
-    actionsElement.appendChild(toggleButton);
+    const toggleButton = document.createElement('button'); // create a button for the toggle
+    toggleButton.classList.add("toggle-button"); // class for styling
+    toggleButton.id = `toggle-${alarm.id}`; // set button's id dynamically
+    toggleButton.textContent = alarm.active ? "Turn Off" : "Turn On"; // Change button text based on active status
+    toggleButton.addEventListener("click", () => toggleAlarm(alarm.id)); // Change event to button click
+    actionsElement.appendChild(toggleButton); // big box = actions element, little box inside of big box = toggleButton
 
-    // Create input element for toggle
-    const toggleInput = document.createElement("input");
-    toggleInput.type = "checkbox";
-    toggleInput.checked = alarm.active;
-    toggleInput.id = `toggle-${alarm.id}`; // Set id for input
-    toggleInput.addEventListener("change", () => toggleAlarm(alarm.id));
-    actionsElement.appendChild(toggleInput);
+    const snoozeButton = document.createElement('button');
+    snoozeButton.classList.add('snooze.button');
+    snoozeButton.textContent = 'Snooze';
+    snoozeButton.addEventListener('click', () => snoozeAlarm(alarm.id));
+    actionsElement.appendChild(snoozeButton);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.addEventListener("click", () => deleteAlarm(alarm.id));
-    actionsElement.appendChild(deleteButton);
+    const deleteButton = document.createElement('button'); // create a button for delete
+    deleteButton.classList.add('delete.button'); // add class for styling, i ended up just using gg-trash so not sure if this is needed
+    deleteButton.innerHTML = '<span class="gg-trash"></span>'; // i made the trash button a trash can, linked in html
+    deleteButton.addEventListener("click", () => deleteAlarm(alarm.id)); // when clicked delete alarm with specific id
+    actionsElement.appendChild(deleteButton); // big box = actionsElement, little box inside of big box = deleteButton
 
-    alarmItem.appendChild(actionsElement);
+    alarmItem.appendChild(actionsElement); // big box = alarmItem, smaller box = actionsElement, even smaller box = buttons etc. 
 
     // If the alarm is inactive, add a class to the alarm item for styling
     if (!alarm.active) {
@@ -226,7 +261,7 @@ function renderAlarms() {
     }
     
     // Append the alarm item to the alarm list
-    alarmList.appendChild(alarmItem);
+    alarmList.appendChild(alarmItem); // alarmList holds all the alarms, alarmItem is a single alarm, appendChild appends the alarmItem to the alarmList. Even bigger box. 
   });
 }
 

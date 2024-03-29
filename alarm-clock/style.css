@@ -30,29 +30,29 @@ body {
 }
 
 .digital-clock:before {
-    content: '';
-    position: absolute;
-    background: linear-gradient(45deg, #24ff6d, #05a2f1, #f3079c);
-    background-size: 200%, 200%;
-    top: -5px;
-    right: -5px;
-    left: -5px;
-    bottom: -5px;
-    z-index: -1;
-    filter: blur(40px);
-    animation: glowing 5s infinite;
+  content: "";
+  position: absolute;
+  background: linear-gradient(45deg, #24ff6d, #05a2f1, #f3079c);
+  background-size: 200%, 200%;
+  top: -5px;
+  right: -5px;
+  left: -5px;
+  bottom: -5px;
+  z-index: -1;
+  filter: blur(40px);
+  animation: glowing 5s infinite;
 }
 
 @keyframes glowing {
-    0% {
-        background-position: 0 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 50% 0;
-    }
+  0% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 50% 0;
+  }
 }
 
 .time {
@@ -175,8 +175,8 @@ body {
 }
 
 .dot-menu.active {
-    visibility: visible;
-    opacity: 1;
+  visibility: visible;
+  opacity: 1;
 }
 
 .menu-item {
@@ -218,13 +218,13 @@ body {
 }
 
 .format-switch-btn.active:before {
-    background: #00c4cc;
-    box-shadow: 0 5px 25px #00c4cc;
-    transform: translateX(10px);
+  background: #00c4cc;
+  box-shadow: 0 5px 25px #00c4cc;
+  transform: translateX(10px);
 }
 
 .alarm-form {
-    z-index: 999;
+  z-index: 999;
   /*position: absolute;
   top: 7px;
   right: 5px; */
@@ -235,22 +235,44 @@ body {
   box-shadow: 0, 5, 25, rgba(0, 0, 0, 0.5);
 }
 
-#alarmTime, button {
-    background: #485470;
-    color: #24ff6d;
+#alarmTime,
+button {
+  background: #485470;
+  background: -webkit-linear-gradient(45deg, #f39304, #f108be);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: transparent;
 }
 
-button:hover{
-    transform: translateY(-5px);
+button:hover {
+  transform: translateY(-5px);
 }
 
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+.alarmItem,
+.time {
+  background: #485470;
+  background: -webkit-linear-gradient(45deg, #f51206, #caec0d);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: transparent;
 }
 
+#alarmTime {
+    background: #485470;
+  background: -webkit-linear-gradient(45deg, #03b4f5, #caec0d);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: transparent;
+}
 
-
-
+.gg-trash {
+    margin-left: 5px;
+    color: #cde8f5;
+    font-size: 10px;
+}
